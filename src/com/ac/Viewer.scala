@@ -26,13 +26,29 @@ object Viewer extends SimpleSwingApplication {
 		        imageView.icon = new ImageIcon(x.getBufferedImage())
 		      case None => {}
 		    }
+		    
+		    processImageAction.enabled = true
 		  } finally {
 		    cursor = getPredefinedCursor(DEFAULT_CURSOR)
 		  }
 		}
+	  	
+	  	val actionsList = new ComboBox(List("Grey"))
+	  	
+	  	val processImageAction = Action("Process") {
+	  	  image = actionsList.selection.index match {
+	  	    case 1 => _grayProcessor(image) 
+	  	  } 
+	  	  
+	  	  imageView.icon = new ImageIcon(image.get.getBufferedImage())
+	  	}
+	  	
+	  	processImageAction.enabled = false
 	  	  
 	  	val buttonPanel = new GridPanel(rows0 = 0, cols0 = 1) {
 	  	  contents += new Button(openImageAction)
+	  	  contents += actionsList
+	  	  contents += new Button(processImageAction)
 	  	}
 	  	  
 	  	val imageView = new Label
@@ -64,6 +80,15 @@ object Viewer extends SimpleSwingApplication {
 	    Dialog.showMessage(null, "Cannot open image file: " + path, top.title, Error)
 	    None
 	  }
+	}
+	
+	private def _grayProcessor(image: Option[IplImage]): Option[IplImage] = {
+		if (image.isDefined) {
+			val img: IplImage = image.get.clone()
+			cvCvtColor(img, img, CV_BGR2GRAY);
+			Some(img)
+		}
+		None
 	}
 	
 	
