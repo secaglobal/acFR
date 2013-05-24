@@ -6,7 +6,7 @@ import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_legacy._
 import com.googlecode.javacv.cpp.opencv_objdetect._
 
-object Recognizer extends App {
+object Recognizer {
 
     val image: CvMat = cvLoadImageM("images/face.jpg", CV_LOAD_IMAGE_GRAYSCALE)
 
