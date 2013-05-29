@@ -7,31 +7,25 @@ import com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor
 import com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2GRAY
 
 class ImageThresholdFilter extends Filter {
-  val thresholds = List(100, 0, 0)
+  val thresholds = List[Byte](100, 100, 100)
 
   def apply(image: IplImage): IplImage = {
-    val size = cvGetSize(image)
-    val img: IplImage = cvCreateImage(size, 16, 1)
-    val width = size.width()
-    val height = size.height()
+    val img: IplImage = cvCreateImage(cvGetSize(image), 8, 1)
     var x = 0
     var y = 0
     var pixelPosition = 0;
     val channelsNr = image.nChannels()
     var dataPtr = image.imageData()
     var resultPtr = img.imageData()
-    var changed: Boolean = false
 
-    while (y < height) {
+    while (y < image.height) {
       x = 0
-      while (x < width) {
-        pixelPosition = y * x * channelsNr + x * channelsNr
-        changed = false
+      while (x < image.width) {
+        pixelPosition = y * image.widthStep + x * channelsNr
 
         for (i <- 0 to channelsNr - 1) {
           if (dataPtr.get(pixelPosition + i) > thresholds(i)) {
-            resultPtr.put(y * x + x, 127)
-            changed = true
+            resultPtr.put(y * img.widthStep + x, 255.toByte)
           }
         }
 
