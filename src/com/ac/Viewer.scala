@@ -11,6 +11,7 @@ import scala.swing._
 import com.ac.filter.Filter
 import com.ac.filter.ImageGreyscaleFilter
 import com.ac.filter.ImageThresholdFilter
+import com.ac.filter.ColorDetectorFilter
 
 object Viewer extends SimpleSwingApplication {
   private lazy val fileChooser = new FileChooser
@@ -19,7 +20,8 @@ object Viewer extends SimpleSwingApplication {
 
     val filters = List(
       "Greyscale" -> classOf[ImageGreyscaleFilter],
-      "Threshold" -> classOf[ImageThresholdFilter]
+      "Threshold" -> classOf[ImageThresholdFilter],
+      "Detect color" -> classOf[ColorDetectorFilter]
     )
 
     var image: Option[IplImage] = None
