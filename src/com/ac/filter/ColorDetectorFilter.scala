@@ -3,12 +3,10 @@ package com.ac.filter
 import com.googlecode.javacv.cpp.opencv_core.cvCreateImage
 import com.googlecode.javacv.cpp.opencv_core.cvGetSize
 import com.googlecode.javacv.cpp.opencv_core.IplImage
-import com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor
-import com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2GRAY
 
 class ColorDetectorFilter extends Filter {
 	def apply(image: IplImage): IplImage = {
-    val target3Ch = List(100, 100, 100)
+    val target3Ch = List(100, 130, 200)
     val result = cvCreateImage(cvGetSize(image), 8, 1)
     val dataPtr = image.imageData()
     val resultPtr = result.imageData()
@@ -20,14 +18,17 @@ class ColorDetectorFilter extends Filter {
 
     while (y < image.height) {
       y_offset = y * image.widthStep
+      x = 0
 
-      while (x < image.width()) {
-        offset = y_offset + x * image.nChannels
+      while (x < image.width) {
+        offset = y_offset + (x * image.nChannels)
 
-        dist = colorDistance(dataPtr.get(offset), dataPtr.get(offset + 1), dataPtr.get(offset + 2), target3Ch)
+        dist = colorDistance(0xff & dataPtr.get(offset), 0xff & dataPtr.get(offset + 1), 0xff & dataPtr.get(offset + 2), target3Ch)
 
-        if (dist < 300) {
-          resultPtr.put(y * result.widthStep + x, 255.toByte)
+        if (dist <= 100) {
+          resultPtr.put(y * result.widthStep() + x, 255.toByte)
+        } else {
+          resultPtr.put(y * result.widthStep() + x, 0)
         }
 
         x +=1
@@ -39,5 +40,12 @@ class ColorDetectorFilter extends Filter {
     result
 	}
 
-  def colorDistance(b: Int, g: Int, r: Int, target: List[Int]) : Int  = target(0) - b + target(1) - g + target(2) - r
+  def colorDistance(b: Int, g: Int, r: Int, target: List[Int]) : Int  = {
+    val res = Math.abs(target(0) - b) + Math.abs(target(1) - g) + Math.abs(target(2) - r)
+    if (res < 100) {
+      println("|%d - %d| + |%d - %d| + |%d - %d| = %d".format(b, target(0), target(1), g, target(2), r, res))
+    }
+
+    res
+  }
 }

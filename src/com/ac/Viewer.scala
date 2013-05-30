@@ -2,7 +2,6 @@ package com.ac
 
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_highgui._
-import com.googlecode.javacv.cpp.opencv_imgproc._
 import java.awt.Cursor._
 import javax.swing.ImageIcon
 import scala.swing.Dialog.Message.Error
